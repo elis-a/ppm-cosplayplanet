@@ -1,0 +1,45 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="height: 40px"></div>
+
+    {% if products %}
+        <h1 class="search-result">Search Results:</h1>
+        <ul>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-3 d-flex justify-content-center align-items-center">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ product.imageURL }}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <a style="text-decoration: none"><h1>{{ product.name }}</h1></a>
+                                <hr>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <button data-product={{ product.id }} data-action="add"
+                                            class="btn add-btn update-cart">Add to cart
+                                    </button>
+                                    <h4 style="display: inline-block; float: right">
+                                        ${{ product.price | floatformat:2 }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </ul>
+    {% else %}
+        <h1 class="search-result">No products found!</h1>
+
+        <div style="height: 350px"></div>
+    {% endif %}
+
+    <a href="{% url 'store' %}" style="text-decoration: none">
+        <button class="btn btn-return-store"><i class="bi bi-arrow-left" style="padding-right: 10px"></i>Return back to
+            store
+        </button>
+    </a>
+
+    <div style="height: 100px"></div>
+
+{% endblock %}

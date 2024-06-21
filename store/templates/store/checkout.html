@@ -1,0 +1,164 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="height: 40px"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <div class="card shipping-card" id="form-wrapper">
+                    <form id="form">
+                        {% csrf_token %}
+                        <div id="user-info">
+                            <div class="form-field">
+                                <input required class="form-control" type="text" name="name" placeholder="Name..">
+                            </div>
+                            <div class="form-field">
+                                <input required class="form-control" type="email" name="email" placeholder="Email..">
+                            </div>
+                        </div>
+
+                        <div id="shipping-info">
+                            <p>Shipping Information:</p>
+                            <div class="form-field">
+                                <input class="form-control" type="text" name="address" placeholder="Address..">
+                            </div>
+                            <div class="form-field">
+                                <input class="form-control" type="text" name="city" placeholder="City..">
+                            </div>
+                            <div class="form-field">
+                                <input class="form-control" type="text" name="state" placeholder="State..">
+                            </div>
+                            <div class="form-field">
+                                <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+                            </div>
+                        </div>
+                        <hr>
+                        <input id="form-button" class="btn btn-checkout" type="submit" value="Continue">
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card checkout-card">
+                    <a href="{% url 'cart' %}" style="text-decoration: none">
+                        <button class="btn btn-continue-shopping"><i class="bi bi-arrow-left"
+                                                                     style="padding-right: 10px"></i>Back to cart
+                        </button>
+                    </a>
+                    <p>ORDER SUMMARY</p>
+                    {% for item in items %}
+                        <div class="row">
+                            <div class="col-3 d-flex align-items-center justify-content-center">
+                                <img class="img-cart" src="{{ item.product.imageURL }}" alt="...">
+                            </div>
+                            <div class="col-3 d-flex align-items-center justify-content-start">
+                                <h3>{{ item.product.name }}</h3>
+                            </div>
+                            <div class="col-3 d-flex align-items-center justify-content-start">
+                                <h3>${{ item.product.price }}</h3>
+                            </div>
+                            <div class="col-3 d-flex align-items-center justify-content-start">
+                                <h3>x{{ item.quantity }}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                    <div class="col-6 d-flex align-items-center justify-content-start" style="margin-bottom: 10px">
+                        <h1>Items: {{ order.get_cart_items }}</h1>
+                    </div>
+                    <div class="col-6 d-flex align-items-center justify-content-start">
+                        <h1>Total: ${{ order.get_cart_total|floatformat:2 }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 300px"></div>
+
+    <script type="text/javascript">
+        var shipping = '{{ order.shipping }}'
+        var total = '{{ order.get_cart_total}}'
+
+        if (shipping == 'False') {
+            document.getElementById('shipping-info').innerHTML = ''
+        }
+
+        if (user != 'AnonymousUser') {
+            document.getElementById('user-info').innerHTML = ''
+        }
+
+        if (shipping == 'False' && user != 'AnonymousUser') {
+            document.getElementById('form-wrapper').classList.add("hidden")
+            document.getElementById('payment-info').classList.remove("hidden")
+        }
+
+        var form = document.getElementById('form')
+
+        csrftoken = form.getElementsByTagName("input")[0].value
+        console.log('Newtoken:', form.getElementsByTagName("input")[0].value)
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+            console.log('Form Submitted...')
+            document.getElementById('form-button').classList.add('hidden')
+            document.getElementById('payment-info').classList.remove('hidden')
+        })
+
+        document.getElementById('make-payment').addEventListener('click', function (e) {
+            submitFormData()
+        })
+
+        function submitFormData() {
+            console.log('Payment button clicked')
+
+            var userFormData = {
+                'name': null,
+                'email': null,
+                'total': total,
+            }
+
+            var shippingInfo = {
+                'address': null,
+                'city': null,
+                'state': null,
+                'zipcode': null,
+            }
+
+            if (shipping != 'False') {
+                shippingInfo.address = form.address.value
+                shippingInfo.city = form.city.value
+                shippingInfo.state = form.state.value
+                shippingInfo.zipcode = form.zipcode.value
+            }
+
+            if (user == 'AnonymousUser') {
+                userFormData.name = form.name.value
+                userFormData.email = form.email.value
+            }
+
+            var url = '/process_order/'
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({'form': userFormData, 'shipping': shippingInfo}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Success:', data);
+                    alert('Transaction completed');
+
+                    cart = {}
+                    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+                    window.location.href = "{% url 'store' %}"
+                })
+        }
+    </script>
+
+{% endblock content %}

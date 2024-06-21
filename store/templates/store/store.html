@@ -1,0 +1,51 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="height: 40px"></div>
+
+    <div class="row">
+        <div class="col-3 d-flex"
+             style="margin-left: 55px; padding:0; height: 32rem; width: 15rem; background-color: black">
+            <ul class="categories" style="list-style-type: none">
+                <li class="category-title" style="border-top: none; padding-bottom: 5px">CATEGORIES</li>
+                <li style="border-top: none; padding-top: 5px"><a href="{% url 'store' %}" class="category">All</a>
+                </li>
+                {% for category in categories %}
+                    <li><a class="category" href="?category={{ category.id }}">{{ category.name }}</a></li>
+                {% endfor %}
+                <li class="search-container" style="border-top: none; padding-top: 30px;">
+                    <form class="d-flex" method="GET" action="{% url 'product_search' %}">
+                        <input id="search-bar" class="form-control me-2" type="search" placeholder="Search"
+                               aria-label="Search"
+                               name="q">
+                        <button class="btn btn-search" type="submit">Search</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <div class="col-9 d-flex flex-wrap">
+            {% for product in products %}
+                <div class="col-4 d-flex justify-content-center align-items-center">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ product.imageURL }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <a style="text-decoration: none"><h1>{{ product.name }}</h1></a>
+                            <hr>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button data-product={{ product.id }} data-action="add"
+                                        class="btn add-btn update-cart">Add to cart
+                                </button>
+                                <h4 style="display: inline-block; float: right">
+                                    ${{ product.price | floatformat:2 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="height: 150px"></div>
+
+{% endblock content %}
