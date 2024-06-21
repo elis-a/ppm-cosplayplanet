@@ -74,11 +74,14 @@
 
 
     <style>
+
+
         /* NAVBAR */
         .logo {
             width: 700px;
+            padding-left: 20px;
             padding-right: 40px;
-            border-right: white 1px solid;
+         border-right: white 1px solid;
         }
 
         .store {
@@ -99,6 +102,7 @@
             font-size: 25px;
             font-family: "Press Start 2P", system-ui;
             padding-left: 20px;
+            padding-right: 30px;
             position: relative;
         }
 
@@ -115,7 +119,7 @@
             font-size: 13px;
             position: absolute;
             top: 10px;
-            right: 100px;
+            right: 30px;
         }
 
         .btn-login {
@@ -205,6 +209,7 @@
 
         .btn-search:hover {
             background-color: #f5b27d;
+            color: #fff;
         }
 
         /* STORE */
@@ -582,9 +587,9 @@
 <body>
 
 <nav style="background-color: black; height: 70px">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row align-items-center" style="height: 70px">
-            <div class="col-9 d-flex" style="padding-left: 0">
+            <div class="col-9 d-flex">
                 <div>
                     <a href="{% url 'store' %}"><img src="{% static 'images/LOGO.png' %}" class="logo" alt="LOGO"></a>
                 </div>
@@ -607,7 +612,7 @@
     </div>
 </nav>
 
-<div class="container-fluid" style="background-color: #E5F5FB;">
+<div class="container-fluid" style="background-color: #E5F5FB; min-height: calc(100vh - 70px)">
     <br>
     {% block content %}
 

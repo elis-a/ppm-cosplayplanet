@@ -24,12 +24,21 @@ def registerPage(request):
 
             return redirect('login')
 
-    context = {'form': form}
+    data = cartData(request)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+
+    context = {
+        'form': form,
+        'items': items,
+        'order': order,
+        'cartItems': cartItems
+    }
     return render(request, 'store/register.html', context)
 
 
 def loginPage(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -42,8 +51,16 @@ def loginPage(request):
         else:
             messages.info(request, 'Username OR password is incorrect')
 
+    data = cartData(request)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
 
-    context = {}
+    context = {
+        'items': items,
+        'order': order,
+        'cartItems': cartItems
+    }
     return render(request, 'store/login.html', context)
 
 
